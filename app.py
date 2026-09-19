@@ -3,6 +3,7 @@ import re
 from urllib.parse import urlparse
 
 from flask import Flask, render_template, request
+from scanner.reconnaissance import collect_basic_reconnaissance
 
 
 app = Flask(__name__)
@@ -55,10 +56,13 @@ def scan():
             "index.html", error=str(error), target_url=target_url
         ), 400
 
+    reconnaissance = collect_basic_reconnaissance(target_url)
+
     return render_template(
         "index.html",
-        success=f"Target accepted: {target_url}. No scan has been started yet.",
+        success="Target accepted. Basic reconnaissance is complete; no scan has been started.",
         target_url=target_url,
+        reconnaissance=reconnaissance,
     )
 
 

@@ -33,6 +33,34 @@
                     <p class="form-message success" role="status">{{ success }}</p>
                 {% endif %}
             </form>
+
+            {% if reconnaissance %}
+                <section class="reconnaissance-results" aria-labelledby="reconnaissance-title">
+                    <h2 id="reconnaissance-title">Basic Reconnaissance Results</h2>
+                    <dl>
+                        <div>
+                            <dt>Original target URL</dt>
+                            <dd>{{ reconnaissance.original_target_url }}</dd>
+                        </div>
+                        <div>
+                            <dt>Scheme</dt>
+                            <dd>{{ reconnaissance.scheme }}</dd>
+                        </div>
+                        <div>
+                            <dt>Hostname</dt>
+                            <dd>{{ reconnaissance.hostname }}</dd>
+                        </div>
+                        <div>
+                            <dt>Explicit port</dt>
+                            <dd>{{ reconnaissance.port if reconnaissance.port is not none else "Not specified" }}</dd>
+                        </div>
+                        <div>
+                            <dt>Resolved IP address</dt>
+                            <dd>{{ reconnaissance.resolved_ip or "Could not resolve hostname" }}</dd>
+                        </div>
+                    </dl>
+                </section>
+            {% endif %}
         </section>
     </main>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
