@@ -102,6 +102,47 @@
                     {% endif %}
                 </section>
             {% endif %}
+
+            {% if http_results %}
+                <section class="http-results" aria-labelledby="http-title">
+                    <h2 id="http-title">HTTP Analysis Results</h2>
+                    {% if http_results.status == "completed" %}
+                        <p class="form-message success">{{ http_results.message }}</p>
+                        <dl>
+                            <div>
+                                <dt>Requested URL</dt>
+                                <dd>{{ http_results.requested_url }}</dd>
+                            </div>
+                            <div>
+                                <dt>Final URL</dt>
+                                <dd>{{ http_results.final_url }}</dd>
+                            </div>
+                            <div>
+                                <dt>Status code</dt>
+                                <dd>{{ http_results.status_code }}</dd>
+                            </div>
+                            <div>
+                                <dt>Response time</dt>
+                                <dd>{{ http_results.response_time_ms }} ms</dd>
+                            </div>
+                            <div>
+                                <dt>Content-Type</dt>
+                                <dd>{{ http_results.content_type or "Not provided" }}</dd>
+                            </div>
+                            <div>
+                                <dt>Server</dt>
+                                <dd>{{ http_results.server or "Not provided" }}</dd>
+                            </div>
+                            <div>
+                                <dt>Redirects followed</dt>
+                                <dd>{{ http_results.redirect_count }}</dd>
+                            </div>
+                        </dl>
+                    {% else %}
+                        <p class="form-message error" role="alert">{{ http_results.message }}</p>
+                    {% endif %}
+                </section>
+            {% endif %}
         </section>
     </main>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

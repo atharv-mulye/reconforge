@@ -3,6 +3,7 @@ import re
 from urllib.parse import urlparse
 
 from flask import Flask, render_template, request
+from scanner.http_scanner import analyze_http
 from scanner.nmap_scanner import run_basic_nmap_scan
 from scanner.reconnaissance import collect_basic_reconnaissance
 
@@ -35,7 +36,7 @@ def has_valid_hostname(hostname):
 
 @app.route("/scan", methods=["POST"])
 def scan():
-    """Accept and validate a target URL. Scanning is added in a later module."""
+    """Validate the target URL and run the available scan modules."""
     target_url = request.form.get("target_url", "").strip()
 
     if not target_url:
@@ -59,11 +60,16 @@ def scan():
 
     reconnaissance = collect_basic_reconnaissance(target_url)
     nmap_results = run_basic_nmap_scan(reconnaissance["hostname"])
+    http_results = analyze_http(target_url)
 
-    if nmap_results["status"] == "completed":
-        success = "Target accepted. Basic reconnaissance and Nmap service scanning are complete."
+    if nmap_results["status"] == "completed" and http_results["status"] == "completed":
+        success = "Target accepted. Reconnaissance, Nmap service scanning, and HTTP analysis are complete."
+    elif http_results["status"] == "completed":
+        success = "Target accepted. Reconnaissance and HTTP analysis are complete; the Nmap scan could not run."
+    elif nmap_results["status"] == "completed":
+        success = "Target accepted. Reconnaissance and Nmap service scanning are complete; HTTP analysis could not run."
     else:
-        success = "Target accepted. Basic reconnaissance is complete; the Nmap scan could not run."
+        success = "Target accepted. Reconnaissance is complete; Nmap and HTTP analysis could not run."
 
     return render_template(
         "index.html",
@@ -71,6 +77,7 @@ def scan():
         target_url=target_url,
         reconnaissance=reconnaissance,
         nmap_results=nmap_results,
+        http_results=http_results,
     )
 
 
