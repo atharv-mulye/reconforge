@@ -103,7 +103,8 @@ button:hover {
 .reconnaissance-results,
 .nmap-results,
 .http-results,
-.security-headers-results {
+.security-headers-results,
+.cookie-security-results {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid #dbe3ee;
@@ -112,7 +113,8 @@ button:hover {
 .reconnaissance-results h2,
 .nmap-results h2,
 .http-results h2,
-.security-headers-results h2 {
+.security-headers-results h2,
+.cookie-security-results h2 {
     margin: 0 0 1rem;
     font-size: 1.2rem;
 }
@@ -183,4 +185,35 @@ button:hover {
 .nmap-results th,
 .security-headers-results th {
     background: #f3f6fa;
+}
+
+.cookie-security-results h3 {
+    margin: 1.25rem 0 0.5rem;
+    font-size: 1rem;
+}
+
+.cookie-security-results dl {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+}
+
+.cookie-security-results dl div {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.cookie-security-results dt {
+    color: #526076;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.cookie-security-results dd {
+    margin: 0;
+}
+
+.cookie-findings {
+    margin: 0.8rem 0 0;
+    padding-left: 1.2rem;
 }

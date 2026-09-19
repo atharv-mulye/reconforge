@@ -3,6 +3,16 @@
 import requests
 
 
+def get_set_cookie_headers(response):
+    """Return every Set-Cookie header without merging multiple cookie values."""
+    raw_headers = getattr(response.raw, "headers", None)
+    if hasattr(raw_headers, "getlist"):
+        return list(raw_headers.getlist("Set-Cookie"))
+    if hasattr(raw_headers, "get_all"):
+        return list(raw_headers.get_all("Set-Cookie") or [])
+    return []
+
+
 def error_result(target_url, message):
     """Return a consistent result when an HTTP request cannot be completed."""
     return {
@@ -16,6 +26,7 @@ def error_result(target_url, message):
         "server": None,
         "redirect_count": 0,
         "response_headers": {},
+        "set_cookie_headers": [],
     }
 
 
@@ -49,4 +60,5 @@ def analyze_http(target_url):
         "server": response.headers.get("Server"),
         "redirect_count": len(response.history),
         "response_headers": dict(response.headers),
+        "set_cookie_headers": get_set_cookie_headers(response),
     }

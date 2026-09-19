@@ -3,6 +3,7 @@ import re
 from urllib.parse import urlparse
 
 from flask import Flask, render_template, request
+from scanner.cookie_security import analyze_cookie_security
 from scanner.http_scanner import analyze_http
 from scanner.nmap_scanner import run_basic_nmap_scan
 from scanner.reconnaissance import collect_basic_reconnaissance
@@ -63,11 +64,12 @@ def scan():
     nmap_results = run_basic_nmap_scan(reconnaissance["hostname"])
     http_results = analyze_http(target_url)
     security_headers_results = analyze_security_headers(http_results)
+    cookie_security_results = analyze_cookie_security(http_results)
 
     if nmap_results["status"] == "completed" and http_results["status"] == "completed":
-        success = "Target accepted. Reconnaissance, Nmap service scanning, HTTP analysis, and security header analysis are complete."
+        success = "Target accepted. Reconnaissance, Nmap service scanning, HTTP analysis, security header analysis, and cookie analysis are complete."
     elif http_results["status"] == "completed":
-        success = "Target accepted. Reconnaissance, HTTP analysis, and security header analysis are complete; the Nmap scan could not run."
+        success = "Target accepted. Reconnaissance, HTTP analysis, security header analysis, and cookie analysis are complete; the Nmap scan could not run."
     elif nmap_results["status"] == "completed":
         success = "Target accepted. Reconnaissance and Nmap service scanning are complete; HTTP analysis could not run."
     else:
@@ -81,6 +83,7 @@ def scan():
         nmap_results=nmap_results,
         http_results=http_results,
         security_headers_results=security_headers_results,
+        cookie_security_results=cookie_security_results,
     )
 
 
