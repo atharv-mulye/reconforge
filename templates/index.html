@@ -235,6 +235,47 @@
                     {% endif %}
                 </section>
             {% endif %}
+
+            {% if risk_results %}
+                <section class="risk-results" aria-labelledby="risk-title">
+                    <h2 id="risk-title">Risk Classification</h2>
+                    {% if risk_results.status == "completed" %}
+                        <p class="form-message success">{{ risk_results.message }}</p>
+                        <dl>
+                            <div>
+                                <dt>Overall Risk</dt>
+                                <dd>{{ risk_results.overall_risk }}</dd>
+                            </div>
+                            <div>
+                                <dt>Total Findings</dt>
+                                <dd>{{ risk_results.summary.total }}</dd>
+                            </div>
+                            <div>
+                                <dt>Critical</dt>
+                                <dd>{{ risk_results.summary.critical }}</dd>
+                            </div>
+                            <div>
+                                <dt>High</dt>
+                                <dd>{{ risk_results.summary.high }}</dd>
+                            </div>
+                            <div>
+                                <dt>Medium</dt>
+                                <dd>{{ risk_results.summary.medium }}</dd>
+                            </div>
+                            <div>
+                                <dt>Low</dt>
+                                <dd>{{ risk_results.summary.low }}</dd>
+                            </div>
+                            <div>
+                                <dt>Informational</dt>
+                                <dd>{{ risk_results.summary.info }}</dd>
+                            </div>
+                        </dl>
+                    {% else %}
+                        <p class="form-message error" role="alert">{{ risk_results.message }}</p>
+                    {% endif %}
+                </section>
+            {% endif %}
         </section>
     </main>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

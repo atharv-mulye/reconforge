@@ -7,6 +7,7 @@ from scanner.cookie_security import analyze_cookie_security
 from scanner.http_scanner import analyze_http
 from scanner.nmap_scanner import run_basic_nmap_scan
 from scanner.reconnaissance import collect_basic_reconnaissance
+from scanner.risk_classifier import classify_risks
 from scanner.security_headers import analyze_security_headers
 from scanner.vulnerability_checks import analyze_vulnerabilities
 
@@ -69,6 +70,7 @@ def scan():
     vulnerability_results = analyze_vulnerabilities(
         http_results, security_headers_results, cookie_security_results
     )
+    risk_results = classify_risks(vulnerability_results)
 
     if nmap_results["status"] == "completed" and http_results["status"] == "completed":
         success = "Target accepted. Reconnaissance, Nmap service scanning, HTTP analysis, security header analysis, cookie analysis, and controlled vulnerability assessment are complete."
@@ -89,6 +91,7 @@ def scan():
         security_headers_results=security_headers_results,
         cookie_security_results=cookie_security_results,
         vulnerability_results=vulnerability_results,
+        risk_results=risk_results,
     )
 
 

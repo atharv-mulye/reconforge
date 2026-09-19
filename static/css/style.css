@@ -105,7 +105,8 @@ button:hover {
 .http-results,
 .security-headers-results,
 .cookie-security-results,
-.vulnerability-results {
+.vulnerability-results,
+.risk-results {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid #dbe3ee;
@@ -116,7 +117,8 @@ button:hover {
 .http-results h2,
 .security-headers-results h2,
 .cookie-security-results h2,
-.vulnerability-results h2 {
+.vulnerability-results h2,
+.risk-results h2 {
     margin: 0 0 1rem;
     font-size: 1.2rem;
 }
@@ -235,4 +237,25 @@ button:hover {
 .vulnerability-finding p {
     margin: 0.6rem 0 0;
     overflow-wrap: anywhere;
+}
+
+.risk-results dl {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+}
+
+.risk-results dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.risk-results dt {
+    color: #526076;
+    font-weight: 700;
+}
+
+.risk-results dd {
+    margin: 0;
 }
