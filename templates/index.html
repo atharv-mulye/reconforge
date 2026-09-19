@@ -16,9 +16,9 @@
                 A foundation for authorized web application security assessment. Only scan systems you own or have explicit permission to test.
             </p>
 
-            <form id="scan-form">
+            <form id="scan-form" action="{{ url_for('scan') }}" method="post">
                 <label for="target-url">Target URL</label>
-                <input id="target-url" name="target_url" type="url" placeholder="http://localhost:3000" required>
+                <input id="target-url" name="target_url" type="url" placeholder="http://localhost:3000" value="{{ target_url | default('') }}" required>
 
                 <label for="target-type">Target Type</label>
                 <select id="target-type" name="target_type">
@@ -26,7 +26,12 @@
                 </select>
 
                 <button type="submit">Start Scan</button>
-                <p id="form-message" class="form-message" aria-live="polite"></p>
+                {% if error %}
+                    <p class="form-message error" role="alert">{{ error }}</p>
+                {% endif %}
+                {% if success %}
+                    <p class="form-message success" role="status">{{ success }}</p>
+                {% endif %}
             </form>
         </section>
     </main>

@@ -91,3 +91,11 @@ button:hover {
     margin: 0.3rem 0 0;
     color: #526076;
 }
+
+.form-message.error {
+    color: #b42318;
+}
+
+.form-message.success {
+    color: #147a3d;
+}
