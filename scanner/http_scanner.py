@@ -15,6 +15,7 @@ def error_result(target_url, message):
         "content_type": None,
         "server": None,
         "redirect_count": 0,
+        "response_headers": {},
     }
 
 
@@ -47,4 +48,5 @@ def analyze_http(target_url):
         "content_type": response.headers.get("Content-Type"),
         "server": response.headers.get("Server"),
         "redirect_count": len(response.history),
+        "response_headers": dict(response.headers),
     }

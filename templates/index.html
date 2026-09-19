@@ -143,6 +143,37 @@
                     {% endif %}
                 </section>
             {% endif %}
+
+            {% if security_headers_results %}
+                <section class="security-headers-results" aria-labelledby="security-headers-title">
+                    <h2 id="security-headers-title">Security Headers</h2>
+                    {% if security_headers_results.status == "completed" %}
+                        <p class="form-message success">{{ security_headers_results.message }}</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Header</th>
+                                    <th>Status</th>
+                                    <th>Value</th>
+                                    <th>Severity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for finding in security_headers_results.findings %}
+                                    <tr>
+                                        <td>{{ finding.header }}</td>
+                                        <td>{{ "Present" if finding.present else "Missing" }}</td>
+                                        <td>{{ finding.value or "Not provided" }}</td>
+                                        <td>{{ finding.severity }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="form-message error" role="alert">{{ security_headers_results.message }}</p>
+                    {% endif %}
+                </section>
+            {% endif %}
         </section>
     </main>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
