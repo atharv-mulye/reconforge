@@ -3,6 +3,7 @@ import re
 from urllib.parse import urlparse
 
 from flask import Flask, render_template, request
+from scanner.nmap_scanner import run_basic_nmap_scan
 from scanner.reconnaissance import collect_basic_reconnaissance
 
 
@@ -57,12 +58,19 @@ def scan():
         ), 400
 
     reconnaissance = collect_basic_reconnaissance(target_url)
+    nmap_results = run_basic_nmap_scan(reconnaissance["hostname"])
+
+    if nmap_results["status"] == "completed":
+        success = "Target accepted. Basic reconnaissance and Nmap service scanning are complete."
+    else:
+        success = "Target accepted. Basic reconnaissance is complete; the Nmap scan could not run."
 
     return render_template(
         "index.html",
-        success="Target accepted. Basic reconnaissance is complete; no scan has been started.",
+        success=success,
         target_url=target_url,
         reconnaissance=reconnaissance,
+        nmap_results=nmap_results,
     )
 
 

@@ -100,13 +100,15 @@ button:hover {
     color: #147a3d;
 }
 
-.reconnaissance-results {
+.reconnaissance-results,
+.nmap-results {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid #dbe3ee;
 }
 
-.reconnaissance-results h2 {
+.reconnaissance-results h2,
+.nmap-results h2 {
     margin: 0 0 1rem;
     font-size: 1.2rem;
 }
@@ -131,4 +133,20 @@ button:hover {
 .reconnaissance-results dd {
     margin: 0;
     overflow-wrap: anywhere;
+}
+
+.nmap-results table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.nmap-results th,
+.nmap-results td {
+    padding: 0.7rem;
+    border: 1px solid #dbe3ee;
+    text-align: left;
+}
+
+.nmap-results th {
+    background: #f3f6fa;
 }

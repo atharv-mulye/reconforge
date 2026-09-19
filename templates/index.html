@@ -61,6 +61,47 @@
                     </dl>
                 </section>
             {% endif %}
+
+            {% if nmap_results %}
+                <section class="nmap-results" aria-labelledby="nmap-title">
+                    <h2 id="nmap-title">Basic Nmap Service Results</h2>
+                    {% if nmap_results.status == "completed" %}
+                        <p class="form-message success">{{ nmap_results.message }}</p>
+                        {% for host in nmap_results.results %}
+                            <p><strong>Host:</strong> {{ host.hostname or nmap_results.target }} ({{ host.ip_address or "IP not reported" }})</p>
+                            {% if host.open_ports %}
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Port</th>
+                                            <th>Protocol</th>
+                                            <th>Service</th>
+                                            <th>Version</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for port in host.open_ports %}
+                                            <tr>
+                                                <td>{{ port.port }}</td>
+                                                <td>{{ port.protocol }}</td>
+                                                <td>{{ port.service or "Unknown" }}</td>
+                                                <td>{{ port.version or "Not reported" }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>No open TCP ports were reported for this host.</p>
+                            {% endif %}
+                        {% else %}
+                            <p>Nmap completed but did not report a reachable host.</p>
+                        {% endfor %}
+                    {% else %}
+                        <p class="form-message error" role="alert">{{ nmap_results.message }}</p>
+                        <p>Run this project from the authorized Kali lab after installing Nmap to enable service scanning.</p>
+                    {% endif %}
+                </section>
+            {% endif %}
         </section>
     </main>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
