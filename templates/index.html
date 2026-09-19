@@ -206,6 +206,45 @@
             {% endif %}
 
 
+            <!-- VAPT Report -->
+
+            {% if report_filename %}
+
+                <section
+                    class="report-section"
+                    aria-labelledby="report-title"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+                            <p class="section-label">REPORT</p>
+
+                            <h2 id="report-title">
+                                VAPT Report
+                            </h2>
+                        </div>
+
+                    </div>
+
+                    <p>
+                        Your VAPT report has been generated successfully.
+                    </p>
+
+                    <a
+                        class="report-link"
+                        href="{{ url_for('view_report', filename=report_filename) }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View VAPT Report →
+                    </a>
+
+                </section>
+
+            {% endif %}
+
+
             <!-- Reconnaissance -->
 
             {% if reconnaissance %}

@@ -3,7 +3,7 @@ import re
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 
 from scanner.cookie_security import analyze_cookie_security
 from scanner.database import (
@@ -14,6 +14,10 @@ from scanner.database import (
 from scanner.http_scanner import analyze_http
 from scanner.nmap_scanner import run_basic_nmap_scan
 from scanner.reconnaissance import collect_basic_reconnaissance
+from scanner.report_generator import (
+    build_report_context,
+    generate_html_report,
+)
 from scanner.risk_classifier import classify_risks
 from scanner.security_headers import analyze_security_headers
 from scanner.vulnerability_checks import analyze_vulnerabilities
@@ -40,6 +44,15 @@ def history():
     """Display previous scan summaries."""
     scans = get_scan_history()
     return render_template("history.html", scans=scans)
+
+
+@app.route("/reports/<path:filename>")
+def view_report(filename):
+    """Serve a generated HTML VAPT report."""
+    return send_from_directory(
+        "reports",
+        filename,
+    )
 
 
 def has_valid_hostname(hostname):
@@ -161,6 +174,25 @@ def scan():
             error,
         )
 
+    # Prepare all completed scan data for report generation.
+    report_context = build_report_context(
+        target_url=target_url,
+        reconnaissance=reconnaissance,
+        nmap_results=nmap_results,
+        http_results=http_results,
+        security_headers_results=security_headers_results,
+        cookie_security_results=cookie_security_results,
+        vulnerability_results=vulnerability_results,
+        risk_results=risk_results,
+    )
+
+    # Generate an HTML VAPT report from the completed scan data.
+    report_path = generate_html_report(report_context)
+
+    # Pass only the filename to the template.
+    # This keeps Windows/Linux path handling out of the HTML.
+    report_filename = report_path.name
+
     return render_template(
         "index.html",
         success=success,
@@ -172,6 +204,8 @@ def scan():
         cookie_security_results=cookie_security_results,
         vulnerability_results=vulnerability_results,
         risk_results=risk_results,
+        report_context=report_context,
+        report_filename=report_filename,
     )
 
 

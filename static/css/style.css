@@ -404,3 +404,35 @@ button:hover {
         grid-template-columns: 1fr;
     }
 }
+
+.report-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.report-section h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.report-section p {
+    color: #526076;
+}
+
+.report-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    background: #1d4ed8;
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.report-link:hover {
+    background: #1e40af;
+}
