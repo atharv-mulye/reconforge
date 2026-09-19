@@ -213,6 +213,28 @@
                     {% endif %}
                 </section>
             {% endif %}
+
+            {% if vulnerability_results %}
+                <section class="vulnerability-results" aria-labelledby="vulnerability-title">
+                    <h2 id="vulnerability-title">Controlled Vulnerability Assessment</h2>
+                    {% if vulnerability_results.status == "completed" %}
+                        <p class="form-message success">{{ vulnerability_results.message }}</p>
+                        {% for finding in vulnerability_results.findings %}
+                            <article class="vulnerability-finding">
+                                <h3>{{ finding.title }}</h3>
+                                <p><strong>Severity:</strong> {{ finding.severity }}</p>
+                                <p>{{ finding.description }}</p>
+                                <p><strong>Evidence:</strong> {{ finding.evidence }}</p>
+                                <p><strong>Recommendation:</strong> {{ finding.recommendation }}</p>
+                            </article>
+                        {% else %}
+                            <p>No controlled vulnerability observations were identified from the collected data.</p>
+                        {% endfor %}
+                    {% else %}
+                        <p class="form-message error" role="alert">{{ vulnerability_results.message }}</p>
+                    {% endif %}
+                </section>
+            {% endif %}
         </section>
     </main>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

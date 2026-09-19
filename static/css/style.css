@@ -104,7 +104,8 @@ button:hover {
 .nmap-results,
 .http-results,
 .security-headers-results,
-.cookie-security-results {
+.cookie-security-results,
+.vulnerability-results {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid #dbe3ee;
@@ -114,7 +115,8 @@ button:hover {
 .nmap-results h2,
 .http-results h2,
 .security-headers-results h2,
-.cookie-security-results h2 {
+.cookie-security-results h2,
+.vulnerability-results h2 {
     margin: 0 0 1rem;
     font-size: 1.2rem;
 }
@@ -216,4 +218,21 @@ button:hover {
 .cookie-findings {
     margin: 0.8rem 0 0;
     padding-left: 1.2rem;
+}
+
+.vulnerability-finding {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #dbe3ee;
+    border-radius: 6px;
+}
+
+.vulnerability-finding h3 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.vulnerability-finding p {
+    margin: 0.6rem 0 0;
+    overflow-wrap: anywhere;
 }
