@@ -1,9 +1,16 @@
 import ipaddress
 import re
+from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 from flask import Flask, render_template, request
+
 from scanner.cookie_security import analyze_cookie_security
+from scanner.database import (
+    get_scan_history,
+    init_database,
+    save_scan_summary,
+)
 from scanner.http_scanner import analyze_http
 from scanner.nmap_scanner import run_basic_nmap_scan
 from scanner.reconnaissance import collect_basic_reconnaissance
@@ -13,6 +20,8 @@ from scanner.vulnerability_checks import analyze_vulnerabilities
 
 
 app = Flask(__name__)
+
+init_database()
 
 HOSTNAME_PATTERN = re.compile(
     r"(?=.{1,253}$)(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)*"
@@ -24,6 +33,13 @@ HOSTNAME_PATTERN = re.compile(
 def index():
     """Render the scanner landing page."""
     return render_template("index.html")
+
+
+@app.route("/history")
+def history():
+    """Display previous scan summaries."""
+    scans = get_scan_history()
+    return render_template("history.html", scans=scans)
 
 
 def has_valid_hostname(hostname):
@@ -45,41 +61,105 @@ def scan():
 
     if not target_url:
         return render_template(
-            "index.html", error="Please enter a target URL."
+            "index.html",
+            error="Please enter a target URL.",
         ), 400
 
     try:
         parsed_url = urlparse(target_url)
+
         if parsed_url.scheme not in {"http", "https"}:
-            raise ValueError("The URL must start with http:// or https://.")
+            raise ValueError(
+                "The URL must start with http:// or https://."
+            )
+
         if not parsed_url.hostname:
-            raise ValueError("The URL must include a valid hostname.")
-        parsed_url.port  # Accessing the port catches invalid port values.
+            raise ValueError(
+                "The URL must include a valid hostname."
+            )
+
+        parsed_url.port
+
         if not has_valid_hostname(parsed_url.hostname):
-            raise ValueError("The URL must include a valid hostname.")
+            raise ValueError(
+                "The URL must include a valid hostname."
+            )
+
     except ValueError as error:
         return render_template(
-            "index.html", error=str(error), target_url=target_url
+            "index.html",
+            error=str(error),
+            target_url=target_url,
         ), 400
 
     reconnaissance = collect_basic_reconnaissance(target_url)
-    nmap_results = run_basic_nmap_scan(reconnaissance["hostname"])
-    http_results = analyze_http(target_url)
-    security_headers_results = analyze_security_headers(http_results)
-    cookie_security_results = analyze_cookie_security(http_results)
-    vulnerability_results = analyze_vulnerabilities(
-        http_results, security_headers_results, cookie_security_results
-    )
-    risk_results = classify_risks(vulnerability_results)
 
-    if nmap_results["status"] == "completed" and http_results["status"] == "completed":
-        success = "Target accepted. Reconnaissance, Nmap service scanning, HTTP analysis, security header analysis, cookie analysis, and controlled vulnerability assessment are complete."
+    nmap_results = run_basic_nmap_scan(
+        reconnaissance["hostname"]
+    )
+
+    http_results = analyze_http(target_url)
+
+    security_headers_results = analyze_security_headers(
+        http_results
+    )
+
+    cookie_security_results = analyze_cookie_security(
+        http_results
+    )
+
+    vulnerability_results = analyze_vulnerabilities(
+        http_results,
+        security_headers_results,
+        cookie_security_results,
+    )
+
+    risk_results = classify_risks(
+        vulnerability_results
+    )
+
+    if (
+        nmap_results["status"] == "completed"
+        and http_results["status"] == "completed"
+    ):
+        success = (
+            "Target accepted. Reconnaissance, Nmap service scanning, "
+            "HTTP analysis, security header analysis, cookie analysis, "
+            "and controlled vulnerability assessment are complete."
+        )
     elif http_results["status"] == "completed":
-        success = "Target accepted. Reconnaissance, HTTP analysis, security header analysis, cookie analysis, and controlled vulnerability assessment are complete; the Nmap scan could not run."
+        success = (
+            "Target accepted. Reconnaissance, HTTP analysis, security "
+            "header analysis, cookie analysis, and controlled "
+            "vulnerability assessment are complete; the Nmap scan "
+            "could not run."
+        )
     elif nmap_results["status"] == "completed":
-        success = "Target accepted. Reconnaissance and Nmap service scanning are complete; HTTP analysis could not run."
+        success = (
+            "Target accepted. Reconnaissance and Nmap service scanning "
+            "are complete; HTTP analysis could not run."
+        )
     else:
-        success = "Target accepted. Reconnaissance is complete; Nmap and HTTP analysis could not run."
+        success = (
+            "Target accepted. Reconnaissance is complete; Nmap and "
+            "HTTP analysis could not run."
+        )
+
+    # Save only a summary of the scan to SQLite.
+    try:
+        save_scan_summary(
+            target_url=target_url,
+            final_url=http_results.get("final_url"),
+            scanned_at=datetime.now(timezone.utc).isoformat(),
+            http_status=http_results.get("status_code"),
+            risk_results=risk_results,
+        )
+    except Exception as error:
+        # Database storage failure should not crash the scanner.
+        app.logger.warning(
+            "Could not save scan history: %s",
+            error,
+        )
 
     return render_template(
         "index.html",

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Scan History - VAPT Scanner</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+    <main class="container">
+
+        <header>
+            <h1>Scan History</h1>
+            <p>Previous VAPT scan summaries.</p>
+
+            <a href="{{ url_for('index') }}">
+                ← Back to Scanner
+            </a>
+        </header>
+
+        {% if scans %}
+
+        <section>
+            <h2>Previous Scans</h2>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Target URL</th>
+                            <th>Scan Time</th>
+                            <th>HTTP Status</th>
+                            <th>Overall Risk</th>
+                            <th>Total Findings</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for scan in scans %}
+                        <tr>
+                            <td>{{ scan.id }}</td>
+
+                            <td>
+                                {{ scan.target_url }}
+                            </td>
+
+                            <td>
+                                {{ scan.scanned_at }}
+                            </td>
+
+                            <td>
+                                {% if scan.http_status %}
+                                    {{ scan.http_status }}
+                                {% else %}
+                                    Not Available
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ scan.overall_risk }}
+                            </td>
+
+                            <td>
+                                {{ scan.total_findings }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        {% else %}
+
+        <section>
+            <h2>No Scan History</h2>
+            <p>No scans have been stored yet.</p>
+        </section>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>
