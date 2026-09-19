@@ -20,12 +20,16 @@ body {
 }
 
 .scanner-card {
-    width: min(100%, 620px);
+    width: min(100%, 900px);
     padding: 2.5rem;
     background: #ffffff;
     border: 1px solid #dbe3ee;
     border-radius: 12px;
     box-shadow: 0 12px 30px rgba(23, 32, 51, 0.08);
+}
+
+.page-header {
+    position: relative;
 }
 
 .eyebrow {
@@ -43,9 +47,21 @@ h1 {
 }
 
 .description {
-    margin: 1rem 0 2rem;
+    margin: 1rem 0 1rem;
     color: #526076;
     line-height: 1.6;
+}
+
+.history-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: #1d4ed8;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.history-link:hover {
+    text-decoration: underline;
 }
 
 form {
@@ -100,6 +116,92 @@ button:hover {
     color: #147a3d;
 }
 
+
+/* Scan Summary */
+
+.scan-summary {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #dbe3ee;
+}
+
+.section-heading {
+    margin-bottom: 1rem;
+}
+
+.section-label {
+    margin: 0 0 0.25rem;
+    color: #526076;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.scan-summary h2 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+}
+
+.summary-card {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.summary-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #526076;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.summary-value {
+    display: block;
+    font-size: 1.25rem;
+}
+
+.summary-target {
+    overflow-wrap: anywhere;
+    font-size: 0.95rem;
+}
+
+.risk-critical {
+    color: #b42318;
+}
+
+.risk-high {
+    color: #b42318;
+}
+
+.risk-medium {
+    color: #b54708;
+}
+
+.risk-low {
+    color: #147a3d;
+}
+
+.risk-informational {
+    color: #526076;
+}
+
+.risk-no-findings {
+    color: #147a3d;
+}
+
+
+/* Result Sections */
+
 .reconnaissance-results,
 .nmap-results,
 .http-results,
@@ -123,11 +225,33 @@ button:hover {
     font-size: 1.2rem;
 }
 
+
+/* Reconnaissance */
+
 .reconnaissance-results dl {
     display: grid;
     gap: 0.8rem;
     margin: 0;
 }
+
+.reconnaissance-results dl div {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.reconnaissance-results dt {
+    color: #526076;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.reconnaissance-results dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+
+/* HTTP */
 
 .http-results dl {
     display: grid;
@@ -151,27 +275,15 @@ button:hover {
     overflow-wrap: anywhere;
 }
 
-.reconnaissance-results dl div {
-    display: grid;
-    gap: 0.2rem;
-}
 
-.reconnaissance-results dt {
-    color: #526076;
-    font-size: 0.9rem;
-    font-weight: 700;
-}
+/* Tables */
 
-.reconnaissance-results dd {
-    margin: 0;
-    overflow-wrap: anywhere;
-}
-
-.nmap-results table {
+.table-container {
     width: 100%;
-    border-collapse: collapse;
+    overflow-x: auto;
 }
 
+.nmap-results table,
 .security-headers-results table {
     width: 100%;
     border-collapse: collapse;
@@ -190,6 +302,9 @@ button:hover {
 .security-headers-results th {
     background: #f3f6fa;
 }
+
+
+/* Cookies */
 
 .cookie-security-results h3 {
     margin: 1.25rem 0 0.5rem;
@@ -222,11 +337,15 @@ button:hover {
     padding-left: 1.2rem;
 }
 
+
+/* Vulnerability Findings */
+
 .vulnerability-finding {
     margin-top: 1rem;
     padding: 1rem;
     border: 1px solid #dbe3ee;
-    border-radius: 6px;
+    border-radius: 8px;
+    background: #f8fafc;
 }
 
 .vulnerability-finding h3 {
@@ -238,6 +357,9 @@ button:hover {
     margin: 0.6rem 0 0;
     overflow-wrap: anywhere;
 }
+
+
+/* Risk Classification */
 
 .risk-results dl {
     display: grid;
@@ -258,4 +380,27 @@ button:hover {
 
 .risk-results dd {
     margin: 0;
+}
+
+
+/* Responsive Layout */
+
+@media (max-width: 700px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .scanner-card {
+        padding: 1.5rem;
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 450px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
 }

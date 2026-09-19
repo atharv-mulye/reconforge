@@ -4,280 +4,759 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Authorized web application security assessment platform.">
+
     <title>Automated Web Application VAPT Scanner</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
 </head>
+
 <body>
+
     <main class="container">
+
         <section class="scanner-card" aria-labelledby="page-title">
-            <p class="eyebrow">Security Assessment Platform</p>
-            <h1 id="page-title">Automated Web Application VAPT Scanner</h1>
-            <p class="description">
-                A foundation for authorized web application security assessment. Only scan systems you own or have explicit permission to test.
-            </p>
 
-            <form id="scan-form" action="{{ url_for('scan') }}" method="post">
-                <label for="target-url">Target URL</label>
-                <input id="target-url" name="target_url" type="url" placeholder="http://localhost:3000" value="{{ target_url | default('') }}" required>
+            <header class="page-header">
+                <p class="eyebrow">Security Assessment Platform</p>
 
-                <label for="target-type">Target Type</label>
-                <select id="target-type" name="target_type">
-                    <option value="web_application" selected>Web Application</option>
+                <h1 id="page-title">
+                    Automated Web Application VAPT Scanner
+                </h1>
+
+                <p class="description">
+                    A foundation for authorized web application security assessment.
+                    Only scan systems you own or have explicit permission to test.
+                </p>
+
+                <a class="history-link" href="{{ url_for('history') }}">
+                    View Scan History →
+                </a>
+            </header>
+
+
+            <!-- Scan Form -->
+
+            <form
+                id="scan-form"
+                action="{{ url_for('scan') }}"
+                method="post"
+            >
+
+                <label for="target-url">
+                    Target URL
+                </label>
+
+                <input
+                    id="target-url"
+                    name="target_url"
+                    type="url"
+                    placeholder="http://localhost:3000"
+                    value="{{ target_url | default('') }}"
+                    required
+                >
+
+                <label for="target-type">
+                    Target Type
+                </label>
+
+                <select
+                    id="target-type"
+                    name="target_type"
+                >
+                    <option value="web_application" selected>
+                        Web Application
+                    </option>
                 </select>
 
-                <button type="submit">Start Scan</button>
+                <button type="submit">
+                    Start Scan
+                </button>
+
                 {% if error %}
-                    <p class="form-message error" role="alert">{{ error }}</p>
+                    <p class="form-message error" role="alert">
+                        {{ error }}
+                    </p>
                 {% endif %}
+
                 {% if success %}
-                    <p class="form-message success" role="status">{{ success }}</p>
+                    <p class="form-message success" role="status">
+                        {{ success }}
+                    </p>
                 {% endif %}
+
             </form>
 
+
+            <!-- Scan Summary -->
+
+            {% if risk_results and risk_results.status == "completed" %}
+
+                <section
+                    class="scan-summary"
+                    aria-labelledby="scan-summary-title"
+                >
+
+                    <div class="section-heading">
+                        <div>
+                            <p class="section-label">Assessment Overview</p>
+
+                            <h2 id="scan-summary-title">
+                                Scan Summary
+                            </h2>
+                        </div>
+                    </div>
+
+
+                    <div class="summary-grid">
+
+                        <article class="summary-card">
+                            <span class="summary-label">
+                                Target
+                            </span>
+
+                            <strong class="summary-value summary-target">
+                                {{ target_url }}
+                            </strong>
+                        </article>
+
+
+                        <article class="summary-card">
+                            <span class="summary-label">
+                                Overall Risk
+                            </span>
+
+                            <strong class="summary-value risk-{{ risk_results.overall_risk | lower | replace(' ', '-') }}">
+                                {{ risk_results.overall_risk }}
+                            </strong>
+                        </article>
+
+
+                        <article class="summary-card">
+                            <span class="summary-label">
+                                Total Findings
+                            </span>
+
+                            <strong class="summary-value">
+                                {{ risk_results.summary.total }}
+                            </strong>
+                        </article>
+
+
+                        <article class="summary-card">
+                            <span class="summary-label">
+                                Critical
+                            </span>
+
+                            <strong class="summary-value">
+                                {{ risk_results.summary.critical }}
+                            </strong>
+                        </article>
+
+
+                        <article class="summary-card">
+                            <span class="summary-label">
+                                High
+                            </span>
+
+                            <strong class="summary-value">
+                                {{ risk_results.summary.high }}
+                            </strong>
+                        </article>
+
+
+                        <article class="summary-card">
+                            <span class="summary-label">
+                                Medium
+                            </span>
+
+                            <strong class="summary-value">
+                                {{ risk_results.summary.medium }}
+                            </strong>
+                        </article>
+
+
+                        <article class="summary-card">
+                            <span class="summary-label">
+                                Low
+                            </span>
+
+                            <strong class="summary-value">
+                                {{ risk_results.summary.low }}
+                            </strong>
+                        </article>
+
+
+                        <article class="summary-card">
+                            <span class="summary-label">
+                                Informational
+                            </span>
+
+                            <strong class="summary-value">
+                                {{ risk_results.summary.info }}
+                            </strong>
+                        </article>
+
+                    </div>
+
+                </section>
+
+            {% endif %}
+
+
+            <!-- Reconnaissance -->
+
             {% if reconnaissance %}
-                <section class="reconnaissance-results" aria-labelledby="reconnaissance-title">
-                    <h2 id="reconnaissance-title">Basic Reconnaissance Results</h2>
+
+                <section
+                    class="reconnaissance-results"
+                    aria-labelledby="reconnaissance-title"
+                >
+
+                    <h2 id="reconnaissance-title">
+                        Basic Reconnaissance Results
+                    </h2>
+
                     <dl>
+
                         <div>
                             <dt>Original target URL</dt>
-                            <dd>{{ reconnaissance.original_target_url }}</dd>
+                            <dd>
+                                {{ reconnaissance.original_target_url }}
+                            </dd>
                         </div>
+
                         <div>
                             <dt>Scheme</dt>
-                            <dd>{{ reconnaissance.scheme }}</dd>
+                            <dd>
+                                {{ reconnaissance.scheme }}
+                            </dd>
                         </div>
+
                         <div>
                             <dt>Hostname</dt>
-                            <dd>{{ reconnaissance.hostname }}</dd>
+                            <dd>
+                                {{ reconnaissance.hostname }}
+                            </dd>
                         </div>
+
                         <div>
                             <dt>Explicit port</dt>
-                            <dd>{{ reconnaissance.port if reconnaissance.port is not none else "Not specified" }}</dd>
+                            <dd>
+                                {{ reconnaissance.port if reconnaissance.port is not none else "Not specified" }}
+                            </dd>
                         </div>
+
                         <div>
                             <dt>Resolved IP address</dt>
-                            <dd>{{ reconnaissance.resolved_ip or "Could not resolve hostname" }}</dd>
+                            <dd>
+                                {{ reconnaissance.resolved_ip or "Could not resolve hostname" }}
+                            </dd>
                         </div>
+
                     </dl>
+
                 </section>
+
             {% endif %}
+
+
+            <!-- Nmap -->
 
             {% if nmap_results %}
-                <section class="nmap-results" aria-labelledby="nmap-title">
-                    <h2 id="nmap-title">Basic Nmap Service Results</h2>
+
+                <section
+                    class="nmap-results"
+                    aria-labelledby="nmap-title"
+                >
+
+                    <h2 id="nmap-title">
+                        Basic Nmap Service Results
+                    </h2>
+
                     {% if nmap_results.status == "completed" %}
-                        <p class="form-message success">{{ nmap_results.message }}</p>
+
+                        <p class="form-message success">
+                            {{ nmap_results.message }}
+                        </p>
+
                         {% for host in nmap_results.results %}
-                            <p><strong>Host:</strong> {{ host.hostname or nmap_results.target }} ({{ host.ip_address or "IP not reported" }})</p>
+
+                            <p>
+                                <strong>Host:</strong>
+                                {{ host.hostname or nmap_results.target }}
+                                ({{ host.ip_address or "IP not reported" }})
+                            </p>
+
                             {% if host.open_ports %}
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Port</th>
-                                            <th>Protocol</th>
-                                            <th>Service</th>
-                                            <th>Version</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for port in host.open_ports %}
+
+                                <div class="table-container">
+
+                                    <table>
+
+                                        <thead>
                                             <tr>
-                                                <td>{{ port.port }}</td>
-                                                <td>{{ port.protocol }}</td>
-                                                <td>{{ port.service or "Unknown" }}</td>
-                                                <td>{{ port.version or "Not reported" }}</td>
+                                                <th>Port</th>
+                                                <th>Protocol</th>
+                                                <th>Service</th>
+                                                <th>Version</th>
                                             </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                                        </thead>
+
+                                        <tbody>
+
+                                            {% for port in host.open_ports %}
+
+                                                <tr>
+                                                    <td>{{ port.port }}</td>
+                                                    <td>{{ port.protocol }}</td>
+                                                    <td>{{ port.service or "Unknown" }}</td>
+                                                    <td>{{ port.version or "Not reported" }}</td>
+                                                </tr>
+
+                                            {% endfor %}
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
                             {% else %}
-                                <p>No open TCP ports were reported for this host.</p>
+
+                                <p>
+                                    No open TCP ports were reported for this host.
+                                </p>
+
                             {% endif %}
+
                         {% else %}
-                            <p>Nmap completed but did not report a reachable host.</p>
+
+                            <p>
+                                Nmap completed but did not report a reachable host.
+                            </p>
+
                         {% endfor %}
+
                     {% else %}
-                        <p class="form-message error" role="alert">{{ nmap_results.message }}</p>
-                        <p>Run this project from the authorized Kali lab after installing Nmap to enable service scanning.</p>
+
+                        <p class="form-message error" role="alert">
+                            {{ nmap_results.message }}
+                        </p>
+
+                        <p>
+                            Run this project from the authorized Kali lab after
+                            installing Nmap to enable service scanning.
+                        </p>
+
                     {% endif %}
+
                 </section>
+
             {% endif %}
 
+
+            <!-- HTTP Analysis -->
+
             {% if http_results %}
-                <section class="http-results" aria-labelledby="http-title">
-                    <h2 id="http-title">HTTP Analysis Results</h2>
+
+                <section
+                    class="http-results"
+                    aria-labelledby="http-title"
+                >
+
+                    <h2 id="http-title">
+                        HTTP Analysis Results
+                    </h2>
+
                     {% if http_results.status == "completed" %}
-                        <p class="form-message success">{{ http_results.message }}</p>
+
+                        <p class="form-message success">
+                            {{ http_results.message }}
+                        </p>
+
                         <dl>
+
                             <div>
                                 <dt>Requested URL</dt>
                                 <dd>{{ http_results.requested_url }}</dd>
                             </div>
+
                             <div>
                                 <dt>Final URL</dt>
                                 <dd>{{ http_results.final_url }}</dd>
                             </div>
+
                             <div>
                                 <dt>Status code</dt>
                                 <dd>{{ http_results.status_code }}</dd>
                             </div>
+
                             <div>
                                 <dt>Response time</dt>
                                 <dd>{{ http_results.response_time_ms }} ms</dd>
                             </div>
+
                             <div>
                                 <dt>Content-Type</dt>
-                                <dd>{{ http_results.content_type or "Not provided" }}</dd>
+                                <dd>
+                                    {{ http_results.content_type or "Not provided" }}
+                                </dd>
                             </div>
+
                             <div>
                                 <dt>Server</dt>
-                                <dd>{{ http_results.server or "Not provided" }}</dd>
+                                <dd>
+                                    {{ http_results.server or "Not provided" }}
+                                </dd>
                             </div>
+
                             <div>
                                 <dt>Redirects followed</dt>
                                 <dd>{{ http_results.redirect_count }}</dd>
                             </div>
+
                         </dl>
+
                     {% else %}
-                        <p class="form-message error" role="alert">{{ http_results.message }}</p>
+
+                        <p class="form-message error" role="alert">
+                            {{ http_results.message }}
+                        </p>
+
                     {% endif %}
+
                 </section>
+
             {% endif %}
+
+
+            <!-- Security Headers -->
 
             {% if security_headers_results %}
-                <section class="security-headers-results" aria-labelledby="security-headers-title">
-                    <h2 id="security-headers-title">Security Headers</h2>
+
+                <section
+                    class="security-headers-results"
+                    aria-labelledby="security-headers-title"
+                >
+
+                    <h2 id="security-headers-title">
+                        Security Headers
+                    </h2>
+
                     {% if security_headers_results.status == "completed" %}
-                        <p class="form-message success">{{ security_headers_results.message }}</p>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Header</th>
-                                    <th>Status</th>
-                                    <th>Value</th>
-                                    <th>Severity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for finding in security_headers_results.findings %}
+
+                        <p class="form-message success">
+                            {{ security_headers_results.message }}
+                        </p>
+
+                        <div class="table-container">
+
+                            <table>
+
+                                <thead>
                                     <tr>
-                                        <td>{{ finding.header }}</td>
-                                        <td>{{ "Present" if finding.present else "Missing" }}</td>
-                                        <td>{{ finding.value or "Not provided" }}</td>
-                                        <td>{{ finding.severity }}</td>
+                                        <th>Header</th>
+                                        <th>Status</th>
+                                        <th>Value</th>
+                                        <th>Severity</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+
+                                <tbody>
+
+                                    {% for finding in security_headers_results.findings %}
+
+                                        <tr>
+                                            <td>{{ finding.header }}</td>
+
+                                            <td>
+                                                {{ "Present" if finding.present else "Missing" }}
+                                            </td>
+
+                                            <td>
+                                                {{ finding.value or "Not provided" }}
+                                            </td>
+
+                                            <td>
+                                                {{ finding.severity }}
+                                            </td>
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
                     {% else %}
-                        <p class="form-message error" role="alert">{{ security_headers_results.message }}</p>
+
+                        <p class="form-message error" role="alert">
+                            {{ security_headers_results.message }}
+                        </p>
+
                     {% endif %}
+
                 </section>
+
             {% endif %}
+
+
+            <!-- Cookie Security -->
 
             {% if cookie_security_results %}
-                <section class="cookie-security-results" aria-labelledby="cookie-security-title">
-                    <h2 id="cookie-security-title">Cookie Security</h2>
+
+                <section
+                    class="cookie-security-results"
+                    aria-labelledby="cookie-security-title"
+                >
+
+                    <h2 id="cookie-security-title">
+                        Cookie Security
+                    </h2>
+
                     {% if cookie_security_results.status == "completed" %}
-                        <p class="form-message success">{{ cookie_security_results.message }}</p>
+
+                        <p class="form-message success">
+                            {{ cookie_security_results.message }}
+                        </p>
+
                         {% for cookie in cookie_security_results.cookies %}
+
                             <h3>{{ cookie.name }}</h3>
+
                             <dl>
+
                                 <div>
                                     <dt>Secure</dt>
-                                    <dd>{{ "Yes" if cookie.secure else "No" }}</dd>
+                                    <dd>
+                                        {{ "Yes" if cookie.secure else "No" }}
+                                    </dd>
                                 </div>
+
                                 <div>
                                     <dt>HttpOnly</dt>
-                                    <dd>{{ "Yes" if cookie.httponly else "No" }}</dd>
+                                    <dd>
+                                        {{ "Yes" if cookie.httponly else "No" }}
+                                    </dd>
                                 </div>
+
                                 <div>
                                     <dt>SameSite</dt>
-                                    <dd>{{ cookie.samesite or "Not set" }}</dd>
+                                    <dd>
+                                        {{ cookie.samesite or "Not set" }}
+                                    </dd>
                                 </div>
+
                             </dl>
+
                             {% if cookie.findings %}
+
                                 <ul class="cookie-findings">
+
                                     {% for finding in cookie.findings %}
-                                        <li>{{ finding.severity }}: {{ finding.message }}</li>
+
+                                        <li>
+                                            {{ finding.severity }}:
+                                            {{ finding.message }}
+                                        </li>
+
                                     {% endfor %}
+
                                 </ul>
+
                             {% else %}
-                                <p>No missing cookie-attribute observations.</p>
+
+                                <p>
+                                    No missing cookie-attribute observations.
+                                </p>
+
                             {% endif %}
+
                         {% else %}
-                            <p>No cookies were returned by the target.</p>
+
+                            <p>
+                                No cookies were returned by the target.
+                            </p>
+
                         {% endfor %}
+
                     {% else %}
-                        <p class="form-message error" role="alert">{{ cookie_security_results.message }}</p>
+
+                        <p class="form-message error" role="alert">
+                            {{ cookie_security_results.message }}
+                        </p>
+
                     {% endif %}
+
                 </section>
+
             {% endif %}
+
+
+            <!-- Vulnerability Assessment -->
 
             {% if vulnerability_results %}
-                <section class="vulnerability-results" aria-labelledby="vulnerability-title">
-                    <h2 id="vulnerability-title">Controlled Vulnerability Assessment</h2>
+
+                <section
+                    class="vulnerability-results"
+                    aria-labelledby="vulnerability-title"
+                >
+
+                    <h2 id="vulnerability-title">
+                        Controlled Vulnerability Assessment
+                    </h2>
+
                     {% if vulnerability_results.status == "completed" %}
-                        <p class="form-message success">{{ vulnerability_results.message }}</p>
+
+                        <p class="form-message success">
+                            {{ vulnerability_results.message }}
+                        </p>
+
                         {% for finding in vulnerability_results.findings %}
+
                             <article class="vulnerability-finding">
-                                <h3>{{ finding.title }}</h3>
-                                <p><strong>Severity:</strong> {{ finding.severity }}</p>
-                                <p>{{ finding.description }}</p>
-                                <p><strong>Evidence:</strong> {{ finding.evidence }}</p>
-                                <p><strong>Recommendation:</strong> {{ finding.recommendation }}</p>
+
+                                <h3>
+                                    {{ finding.title }}
+                                </h3>
+
+                                <p>
+                                    <strong>Severity:</strong>
+                                    {{ finding.severity }}
+                                </p>
+
+                                <p>
+                                    {{ finding.description }}
+                                </p>
+
+                                <p>
+                                    <strong>Evidence:</strong>
+                                    {{ finding.evidence }}
+                                </p>
+
+                                <p>
+                                    <strong>Recommendation:</strong>
+                                    {{ finding.recommendation }}
+                                </p>
+
                             </article>
+
                         {% else %}
-                            <p>No controlled vulnerability observations were identified from the collected data.</p>
+
+                            <p>
+                                No controlled vulnerability observations
+                                were identified from the collected data.
+                            </p>
+
                         {% endfor %}
+
                     {% else %}
-                        <p class="form-message error" role="alert">{{ vulnerability_results.message }}</p>
+
+                        <p class="form-message error" role="alert">
+                            {{ vulnerability_results.message }}
+                        </p>
+
                     {% endif %}
+
                 </section>
+
             {% endif %}
 
+
+            <!-- Risk Classification -->
+
             {% if risk_results %}
-                <section class="risk-results" aria-labelledby="risk-title">
-                    <h2 id="risk-title">Risk Classification</h2>
+
+                <section
+                    class="risk-results"
+                    aria-labelledby="risk-title"
+                >
+
+                    <h2 id="risk-title">
+                        Risk Classification
+                    </h2>
+
                     {% if risk_results.status == "completed" %}
-                        <p class="form-message success">{{ risk_results.message }}</p>
+
+                        <p class="form-message success">
+                            {{ risk_results.message }}
+                        </p>
+
                         <dl>
+
                             <div>
                                 <dt>Overall Risk</dt>
-                                <dd>{{ risk_results.overall_risk }}</dd>
+                                <dd>
+                                    {{ risk_results.overall_risk }}
+                                </dd>
                             </div>
+
                             <div>
                                 <dt>Total Findings</dt>
-                                <dd>{{ risk_results.summary.total }}</dd>
+                                <dd>
+                                    {{ risk_results.summary.total }}
+                                </dd>
                             </div>
+
                             <div>
                                 <dt>Critical</dt>
-                                <dd>{{ risk_results.summary.critical }}</dd>
+                                <dd>
+                                    {{ risk_results.summary.critical }}
+                                </dd>
                             </div>
+
                             <div>
                                 <dt>High</dt>
-                                <dd>{{ risk_results.summary.high }}</dd>
+                                <dd>
+                                    {{ risk_results.summary.high }}
+                                </dd>
                             </div>
+
                             <div>
                                 <dt>Medium</dt>
-                                <dd>{{ risk_results.summary.medium }}</dd>
+                                <dd>
+                                    {{ risk_results.summary.medium }}
+                                </dd>
                             </div>
+
                             <div>
                                 <dt>Low</dt>
-                                <dd>{{ risk_results.summary.low }}</dd>
+                                <dd>
+                                    {{ risk_results.summary.low }}
+                                </dd>
                             </div>
+
                             <div>
                                 <dt>Informational</dt>
-                                <dd>{{ risk_results.summary.info }}</dd>
+                                <dd>
+                                    {{ risk_results.summary.info }}
+                                </dd>
                             </div>
+
                         </dl>
+
                     {% else %}
-                        <p class="form-message error" role="alert">{{ risk_results.message }}</p>
+
+                        <p class="form-message error" role="alert">
+                            {{ risk_results.message }}
+                        </p>
+
                     {% endif %}
+
                 </section>
+
             {% endif %}
+
         </section>
+
     </main>
+
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
 </body>
 </html>
