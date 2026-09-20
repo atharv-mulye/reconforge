@@ -62,7 +62,7 @@ def build_html_report(report_context):
     risk_results = report_context["risk_results"]
     summary = risk_results.get("summary", {})
 
-    return f"""<!DOCTYPE html>
+    html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -197,7 +197,12 @@ def build_html_report(report_context):
 
             <tr>
                 <th>Resolved IP</th>
-                <td>{safe_html(report_context["reconnaissance"].get("resolved_ip") or "Not available")}</td>
+                <td>
+                    {safe_html(
+                        report_context["reconnaissance"].get("resolved_ip")
+                        or "Not available"
+                    )}
+                </td>
             </tr>
         </table>
     </section>
@@ -267,12 +272,20 @@ def build_html_report(report_context):
         <table>
             <tr>
                 <th>Scheme</th>
-                <td>{safe_html(report_context["reconnaissance"].get("scheme"))}</td>
+                <td>
+                    {safe_html(
+                        report_context["reconnaissance"].get("scheme")
+                    )}
+                </td>
             </tr>
 
             <tr>
                 <th>Hostname</th>
-                <td>{safe_html(report_context["reconnaissance"].get("hostname"))}</td>
+                <td>
+                    {safe_html(
+                        report_context["reconnaissance"].get("hostname")
+                    )}
+                </td>
             </tr>
 
             <tr>
@@ -302,7 +315,7 @@ def build_html_report(report_context):
         <h2>Nmap Service Results</h2>
 
         <p>
-            Status:
+            <strong>Status:</strong>
             {safe_html(
                 report_context["nmap_results"].get(
                     "status",
@@ -312,7 +325,12 @@ def build_html_report(report_context):
         </p>
 
         <p>
-            {safe_html(report_context["nmap_results"].get("message", ""))}
+            {safe_html(
+                report_context["nmap_results"].get(
+                    "message",
+                    ""
+                )
+            )}
         </p>
 
         <table>
@@ -326,16 +344,65 @@ def build_html_report(report_context):
             </tr>
 """
 
-    for host in report_context["nmap_results"].get("results", []):
-        for port in host.get("open_ports", []):
+    # Read the structured Nmap host results.
+    nmap_hosts = report_context["nmap_results"].get("results", [])
+
+    # Track whether at least one open-port row was added.
+    nmap_rows = 0
+
+    for host in nmap_hosts:
+        open_ports = host.get("open_ports", [])
+
+        for port in open_ports:
+            nmap_rows += 1
+
             html += f"""
             <tr>
-                <td>{safe_html(host.get("hostname") or "Not reported")}</td>
-                <td>{safe_html(host.get("ip_address") or "Not reported")}</td>
-                <td>{safe_html(port.get("port"))}</td>
-                <td>{safe_html(port.get("protocol"))}</td>
-                <td>{safe_html(port.get("service") or "Unknown")}</td>
-                <td>{safe_html(port.get("version") or "Not reported")}</td>
+                <td>
+                    {safe_html(
+                        host.get("hostname") or "Not reported"
+                    )}
+                </td>
+
+                <td>
+                    {safe_html(
+                        host.get("ip_address") or "Not reported"
+                    )}
+                </td>
+
+                <td>
+                    {safe_html(
+                        port.get("port") or "Not reported"
+                    )}
+                </td>
+
+                <td>
+                    {safe_html(
+                        port.get("protocol") or "Not reported"
+                    )}
+                </td>
+
+                <td>
+                    {safe_html(
+                        port.get("service") or "Unknown"
+                    )}
+                </td>
+
+                <td>
+                    {safe_html(
+                        port.get("version") or "Not reported"
+                    )}
+                </td>
+            </tr>
+"""
+
+    # Show an explicit message if Nmap completed but returned no open ports.
+    if nmap_rows == 0:
+        html += """
+            <tr>
+                <td colspan="6">
+                    No open ports were reported by Nmap.
+                </td>
             </tr>
 """
 
@@ -387,13 +454,29 @@ def build_html_report(report_context):
             </tr>
 """
 
-    for finding in report_context["security_headers_results"].get("findings", []):
+    for finding in report_context["security_headers_results"].get(
+        "findings",
+        []
+    ):
         html += f"""
             <tr>
-                <td>{safe_html(finding.get("header"))}</td>
-                <td>{"Present" if finding.get("present") else "Missing"}</td>
-                <td>{safe_html(finding.get("value") or "Not provided")}</td>
-                <td>{safe_html(finding.get("severity"))}</td>
+                <td>
+                    {safe_html(finding.get("header"))}
+                </td>
+
+                <td>
+                    {"Present" if finding.get("present") else "Missing"}
+                </td>
+
+                <td>
+                    {safe_html(
+                        finding.get("value") or "Not provided"
+                    )}
+                </td>
+
+                <td>
+                    {safe_html(finding.get("severity"))}
+                </td>
             </tr>
 """
 
@@ -406,7 +489,10 @@ def build_html_report(report_context):
         <h2>Cookie Security</h2>
 """
 
-    cookies = report_context["cookie_security_results"].get("cookies", [])
+    cookies = report_context["cookie_security_results"].get(
+        "cookies",
+        []
+    )
 
     if cookies:
         for cookie in cookies:
@@ -426,14 +512,19 @@ def build_html_report(report_context):
 
             <p>
                 <strong>SameSite:</strong>
-                {safe_html(cookie.get("samesite") or "Not set")}
+                {safe_html(
+                    cookie.get("samesite") or "Not set"
+                )}
             </p>
 """
 
             for finding in cookie.get("findings", []):
                 html += f"""
             <p>
-                <strong>{safe_html(finding.get("severity"))}:</strong>
+                <strong>
+                    {safe_html(finding.get("severity"))}:
+                </strong>
+
                 {safe_html(finding.get("message"))}
             </p>
 """
@@ -441,7 +532,6 @@ def build_html_report(report_context):
             html += """
         </div>
 """
-
     else:
         html += """
         <p>No cookies were returned by the target.</p>
@@ -455,14 +545,19 @@ def build_html_report(report_context):
         <h2>Vulnerability Findings</h2>
 """
 
-    findings = report_context["vulnerability_results"].get("findings", [])
+    findings = report_context["vulnerability_results"].get(
+        "findings",
+        []
+    )
 
     if findings:
         for finding in findings:
             html += f"""
         <article class="finding">
 
-            <h3>{safe_html(finding.get("title"))}</h3>
+            <h3>
+                {safe_html(finding.get("title"))}
+            </h3>
 
             <p>
                 <strong>Severity:</strong>
@@ -486,7 +581,6 @@ def build_html_report(report_context):
 
         </article>
 """
-
     else:
         html += """
         <p>
@@ -509,7 +603,10 @@ def build_html_report(report_context):
 """
 
     html += safe_html(
-        risk_results.get("overall_risk", "Not Available")
+        risk_results.get(
+            "overall_risk",
+            "Not Available"
+        )
     )
 
     html += """
@@ -521,7 +618,9 @@ def build_html_report(report_context):
                 <td>
 """
 
-    html += safe_html(summary.get("total", 0))
+    html += safe_html(
+        summary.get("total", 0)
+    )
 
     html += """
                 </td>
@@ -532,7 +631,9 @@ def build_html_report(report_context):
                 <td>
 """
 
-    html += safe_html(summary.get("critical", 0))
+    html += safe_html(
+        summary.get("critical", 0)
+    )
 
     html += """
                 </td>
@@ -543,7 +644,9 @@ def build_html_report(report_context):
                 <td>
 """
 
-    html += safe_html(summary.get("high", 0))
+    html += safe_html(
+        summary.get("high", 0)
+    )
 
     html += """
                 </td>
@@ -554,7 +657,9 @@ def build_html_report(report_context):
                 <td>
 """
 
-    html += safe_html(summary.get("medium", 0))
+    html += safe_html(
+        summary.get("medium", 0)
+    )
 
     html += """
                 </td>
@@ -565,7 +670,9 @@ def build_html_report(report_context):
                 <td>
 """
 
-    html += safe_html(summary.get("low", 0))
+    html += safe_html(
+        summary.get("low", 0)
+    )
 
     html += """
                 </td>
@@ -576,7 +683,9 @@ def build_html_report(report_context):
                 <td>
 """
 
-    html += safe_html(summary.get("info", 0))
+    html += safe_html(
+        summary.get("info", 0)
+    )
 
     html += """
                 </td>
