@@ -71,7 +71,10 @@
                     </option>
                 </select>
 
-                <button type="submit">
+                <button
+                    id="scan-button"
+                    type="submit"
+                >
                     Start Scan
                 </button>
 
@@ -88,6 +91,176 @@
                 {% endif %}
 
             </form>
+
+
+            <!-- Scan Progress -->
+
+            <section
+                id="scan-progress"
+                class="scan-progress"
+                aria-labelledby="scan-progress-title"
+                aria-live="polite"
+                hidden
+            >
+
+                <div class="progress-header">
+
+                    <div>
+                        <p class="section-label">
+                            SCAN IN PROGRESS
+                        </p>
+
+                        <h2 id="scan-progress-title">
+                            Security assessment running
+                        </h2>
+                    </div>
+
+                    <strong
+                        id="progress-percent"
+                        class="progress-percent"
+                    >
+                        0%
+                    </strong>
+
+                </div>
+
+
+                <div
+                    class="progress-track"
+                    role="progressbar"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="0"
+                    aria-label="Scan progress"
+                >
+                    <div
+                        id="progress-bar"
+                        class="progress-bar"
+                    ></div>
+                </div>
+
+
+                <p
+                    id="progress-message"
+                    class="progress-message"
+                >
+                    Preparing security assessment...
+                </p>
+
+
+                <div class="scan-steps">
+
+                    <div
+                        id="step-validation"
+                        class="scan-step"
+                    >
+                        <span class="step-indicator">1</span>
+
+                        <div>
+                            <strong>Target validation</strong>
+                            <span>Checking target URL</span>
+                        </div>
+                    </div>
+
+
+                    <div
+                        id="step-recon"
+                        class="scan-step"
+                    >
+                        <span class="step-indicator">2</span>
+
+                        <div>
+                            <strong>Reconnaissance</strong>
+                            <span>Resolving hostname and target details</span>
+                        </div>
+                    </div>
+
+
+                    <div
+                        id="step-nmap"
+                        class="scan-step"
+                    >
+                        <span class="step-indicator">3</span>
+
+                        <div>
+                            <strong>Nmap service scanning</strong>
+                            <span>Checking available services and ports</span>
+                        </div>
+                    </div>
+
+
+                    <div
+                        id="step-http"
+                        class="scan-step"
+                    >
+                        <span class="step-indicator">4</span>
+
+                        <div>
+                            <strong>HTTP analysis</strong>
+                            <span>Analyzing HTTP response</span>
+                        </div>
+                    </div>
+
+
+                    <div
+                        id="step-headers"
+                        class="scan-step"
+                    >
+                        <span class="step-indicator">5</span>
+
+                        <div>
+                            <strong>Security headers</strong>
+                            <span>Checking security-related headers</span>
+                        </div>
+                    </div>
+
+
+                    <div
+                        id="step-cookies"
+                        class="scan-step"
+                    >
+                        <span class="step-indicator">6</span>
+
+                        <div>
+                            <strong>Cookie security</strong>
+                            <span>Checking cookie protection attributes</span>
+                        </div>
+                    </div>
+
+
+                    <div
+                        id="step-vulnerability"
+                        class="scan-step"
+                    >
+                        <span class="step-indicator">7</span>
+
+                        <div>
+                            <strong>Vulnerability assessment</strong>
+                            <span>Evaluating collected security observations</span>
+                        </div>
+                    </div>
+
+
+                    <div
+                        id="step-risk"
+                        class="scan-step"
+                    >
+                        <span class="step-indicator">8</span>
+
+                        <div>
+                            <strong>Risk classification & report</strong>
+                            <span>Classifying findings and generating report</span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <p class="scan-warning">
+                    Please keep this page open while the assessment is running.
+                </p>
+
+            </section>
 
 
             <!-- Scan Summary -->
