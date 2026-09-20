@@ -433,8 +433,3 @@ ReconForge currently provides an end-to-end automated web application security a
 ReconForge is developed for **educational, research, and authorized security testing purposes**.
 
 The developer is not responsible for unauthorized or unlawful use of this project.
-
-```
-
-Available next action: :contentReference[oaicite:0]{index=0}
-```
