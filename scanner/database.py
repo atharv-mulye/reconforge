@@ -155,3 +155,14 @@ def get_scan_by_id(scan_id):
         return dict(row) if row else None
     finally:
         connection.close()
+
+
+def clear_scan_history():
+    """Delete all scan-history records from the database."""
+    connection = get_connection()
+
+    try:
+        connection.execute("DELETE FROM scans")
+        connection.commit()
+    finally:
+        connection.close()

@@ -58,18 +58,10 @@
                     required
                 >
 
-                <label for="target-type">
-                    Target Type
-                </label>
-
-                <select
-                    id="target-type"
-                    name="target_type"
-                >
-                    <option value="web_application" selected>
-                        Web Application
-                    </option>
-                </select>
+                <div class="target-type-display">
+                    <span class="target-type-label">Target Type</span>
+                    <span class="target-type-value">Web Application</span>
+                </div>
 
                 <button
                     id="scan-button"
@@ -248,7 +240,7 @@
                         <span class="step-indicator">8</span>
 
                         <div>
-                            <strong>Risk classification & report</strong>
+                            <strong>Risk classification &amp; report</strong>
                             <span>Classifying findings and generating report</span>
                         </div>
                     </div>

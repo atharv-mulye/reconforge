@@ -6,10 +6,19 @@ import uuid
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
-from flask import Flask, jsonify, render_template, request, send_from_directory
+from flask import (
+    Flask,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 
 from scanner.cookie_security import analyze_cookie_security
 from scanner.database import (
+    clear_scan_history,
     get_scan_history,
     init_database,
     save_scan_summary,
@@ -28,6 +37,7 @@ from scanner.vulnerability_checks import analyze_vulnerabilities
 
 app = Flask(__name__)
 init_database()
+
 
 HOSTNAME_PATTERN = re.compile(
     r"(?=.{1,253}$)(?:[A-Za-z0-9]"
@@ -303,6 +313,13 @@ def history():
     """Display previous scan summaries."""
     scans = get_scan_history()
     return render_template("history.html", scans=scans)
+
+
+@app.route("/history/clear", methods=["POST"])
+def clear_history():
+    """Clear all stored scan-history records."""
+    clear_scan_history()
+    return redirect(url_for("history"))
 
 
 @app.route("/reports/<path:filename>")

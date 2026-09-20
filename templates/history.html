@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Scan History - VAPT Scanner</title>
+    <title>Scan History - ReconForge</title>
 
     <link
         rel="stylesheet"
@@ -29,6 +29,18 @@
 
         <section>
             <h2>Previous Scans</h2>
+
+            <div style="margin-bottom: 20px;">
+                <form
+                    action="{{ url_for('clear_history') }}"
+                    method="POST"
+                    onsubmit="return confirmClearHistory();"
+                >
+                    <button type="submit">
+                        Clear Scan History
+                    </button>
+                </form>
+            </div>
 
             <div class="table-container">
                 <table>
@@ -89,6 +101,15 @@
         {% endif %}
 
     </main>
+
+    <script>
+        function confirmClearHistory() {
+            return confirm(
+                "Are you sure you want to clear all scan history?\n\n" +
+                "This will permanently delete all stored scan-history records."
+            );
+        }
+    </script>
 
 </body>
 </html>
