@@ -1,4 +1,3 @@
-````md
 # ReconForge
 
 ### Web Application Security Assessment Platform
